@@ -204,5 +204,118 @@ struct Customer create_customer(char *path_to_customer)
   return customer;
 }
 
+//****** MAIN MENU ******//
+
+// Method to print out the details of the shop 
+void printShop(struct Shop *sh)
+
+// Display details of the shops cash
+ printf("\nShop has €%.2f in cash\n", sh->cash);
+ printf("==== ==== ====\n");
+
+// For loop to loop over the index and show item details
+   for (int i = 0; i < sh->index; i++)
+  {
+    printProduct(sh->stock[i].product);
+    printf("Available amount: %d\n", sh->stock[i].quantity);
+  }
+  printf("\n");
+}
 
 
+// Method to print out the details of the customer
+// Return total cost
+double print_customers_details(struct Customer *cust, struct Shop *sh)
+{
+  // Print customer details as per struct within main method 
+  printf("\nCustomer name: %s, budget: €%.2f \n", cust->name, cust->budget); 
+  printf("---- ---- ----\n");
+
+  // Initialise variables
+  double total_cost = 0.0;
+
+  // int customer_wants = cust.shoppingList[0].quantity;
+
+  // Print the shopping list of the customer
+  printf("%s wants the following products: \n", cust->name);
+
+  // For loop to loop over the shopping list of the customer
+  for (int i = 0; i < cust->index; i++)
+  {
+    // Show customers details
+    printf(" -%s, quantity %d. ", cust->shoppingList[i].product, cust->shoppingList[i].quantity); // example of chain-accessing the data in the nested stucts
+
+    // Initialise variable
+    double sub_total = 0;
+
+    //****** CUSTOMER******//
+
+    // check if shopping list matches shop list of products
+    int match_exist = 0;
+    // assign product (i-th) name to the shopping list as shorthand
+    char *cust_item_name = cust->shoppingList[i].product.name;
+
+    // Loop over the stock to find a match 
+    for (int j = 0; j < sh->index; j++)
+    {
+        // Assign product (j-th) from shop stock list as shorthand
+      char *sh_item_name = sh->stock[j].product.name; 
+
+        // Use IF statement and BOOL values to see if we have a match
+      if (strcmp(cust_item_name, sh_item_name) == 0)
+      {
+        match_exist++;
+
+        // Use IF statement to see if we have enough stock in the shop to fulfil the customer order
+        // IF enough stock
+        if (cust->shoppingList[i].quantity <= sh->stock[j].quantity) 
+        {
+          printf("\tYes, the shop has enough stock to process your order and "); 
+
+          // Full cost of shopping list (Price* Quantity)
+          double sub_total_full = cust->shoppingList[i].quantity * sh->stock[j].product.price;
+          printf("you must pay the shop €%.2f. \n", sub_total_full);          
+          sub_total = sub_total_full; 
+        }
+
+        else 
+        {
+          // customer wants to order more stockcheck
+          // See how many can be bought
+          int partial_order_qty = cust->shoppingList[i].quantity - (cust->shoppingList[i].quantity - sh->stock[j].quantity);
+
+          // perform the cost of the i-th item from the customer's shopping list
+          double sub_total_partial = partial_order_qty * sh->stock[j].product.price;
+          printf("\tThe shop only has %d available in stock and now you must pay the shop €%.2f. \n", partial_order_qty, sub_total_partial); 
+          sub_total = sub_total_partial;
+        }
+        // addition of sub totals
+        total_cost = total_cost + sub_total;
+      }
+    }
+    // Product not available, Nill match
+    if (match_exist == 0) 
+    {
+        // Prints out cost of all items of the product
+      printf("\tThe product you request is not available. Sorry for the inconvenienceSub-total cost will be €%.2f. \n", sub_total);
+    }
+  }
+  // Print out cost of shopping
+  printf("\nthe total scost for todays shopping is €%.2f. \n\n", total_cost); 
+
+  return total_cost;
+}
+
+
+
+//****** MAIN METHOD ******//
+
+int main()
+{
+
+  // Create shop
+  struct Shop shop_one = createAndStockShop(); 
+
+  // Nill return
+  return 0;
+}
