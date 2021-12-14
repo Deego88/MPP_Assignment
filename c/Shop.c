@@ -158,5 +158,51 @@ struct Customer create_customer(char *path_to_customer)
   read = getline(&line, &len, fp);
 
 // Function "strtok" is used to break down the string with a "," https://pubs.opengroup.org/onlinepubs/007904975/functions/strtok.html
-  char *nam = strtok(line, ",");
-  char *bud = strtok(NULL, ",");
+  char *nam = strtok(line, ","); // Exctract product name and assigns to variable "name"
+  char *bud = strtok(NULL, ","); // Exctract product available quantity 
+  
+  // Use strcoy to copy "nam" variable to str variable, max length is 50 char for char *name. atof used previously.
+  char *name = malloc(sizeof(char) * 50);
+  strcpy(name, nam);
+  double budget = atof(bud);
+
+  // Assign name and budget moeny to customer
+  struct Customer customer = {name, budget};
+  //printf("Ccustomer: %s, money: %.2f\n", customer.name, customer.budget); // for testing
+
+// read in each line of the file to != -1 (end of file)
+  while ((read = getline(&line, &len, fp)) != -1)
+  {
+    // Function "strtok" is used to break down the string with a "," https://pubs.opengroup.org/onlinepubs/007904975/functions/strtok.html
+    char *p_nam = strtok(line, ","); // Exctract product name 
+    char *p_qua = strtok(NULL, ","); // Exctract product available quantity 
+
+    
+    // Conversion of str adn int: https://www.geeksforgeeks.org/atol-atoll-and-atof-functions-in-c-c/
+    char *name = malloc(sizeof(char) * 50);
+    strcpy(name, p_nam);
+    int quantity = atoi(p_qua);
+
+    struct Product product = {name};
+    // temp variable shopping list item
+    struct ProductQuantity shopping_list_item = {product, quantity};
+    // printf("Test3: %s, qty: %d\n", shopping_list_item.product, shopping_list_item.quantity); //test Ok
+    // Assign shopping_list_items and shoppingList[index] together
+    customer.shoppingList[customer.index++] = shopping_list_item;
+
+    // printf("Test2: %s\n", product.name); //test OK
+    // printf("Test3: %s\n", price); // test NOT OK
+    // printf("qty, %d\n", customer.shoppingList[customer.index]); // for testing - OK
+  }
+  
+  // test
+  // printf("Number of itmes: %d\n", customer.index); // test OK
+  // printf("1st product: %s\n", customer.shoppingList[0].product.name);       // test OK
+  // printf("Amount of 1st product: %d\n", customer.shoppingList[0].quantity); // test OK
+  // printf("****\n\n");
+
+  return customer;
+}
+
+
+
