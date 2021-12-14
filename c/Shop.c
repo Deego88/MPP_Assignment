@@ -6,6 +6,7 @@
 #include <string.h>
 #include <stdlib.h>
 
+                        //****** CREATE DATA STRUCTS ******//
 
 // Create struct Product. Use * for dynamic space allocation.  Double float for more precision. 
 struct Product
@@ -69,7 +70,8 @@ double get_product_price(struct Product prod)
 {
 // Values of prod.price from another struct
   return prod.price;
-}
+
+                        //****** CREATE SHOP ******//
 
 // Create and stock the shop. The Struct "Shop" retruns method output createAndStockShop().
 struct Shop createAndStockShop() 
@@ -104,7 +106,7 @@ struct Shop createAndStockShop()
   {
     // printf(": %s \n", line); // This is for testing if the program reads the file
 
-    // Function "strtok" is used to break down teh string with a "," https://pubs.opengroup.org/onlinepubs/007904975/functions/strtok.html
+    // Function "strtok" is used to break down the string with a "," https://pubs.opengroup.org/onlinepubs/007904975/functions/strtok.html
     char *nam = strtok(line, ","); // Exctract product name and assigns to variable "name"
     char *pri = strtok(NULL, ","); // Exctract product price 
     char *qua = strtok(NULL, ","); // Exctract product available quantity 
@@ -129,3 +131,32 @@ struct Shop createAndStockShop()
   return shop; 
 }
 
+                        //****** CUSTOMER SHOP EXPERIENCE******//
+
+// Read in data (product stock) and add to the customer struct
+struct Customer create_customer(char *path_to_customer)
+{
+
+  // Read in file as previous
+  FILE *fp;
+  char *line = NULL;
+  size_t len = 0;
+  size_t read;
+  // fiel in same directory, read only
+  fp = fopen(path_to_customer, "r");
+  //fp = fopen("../Data/customer_broke.csv", "r"); 
+  //fp = fopen("../Data/customer_exceeding_order.csv", "r");
+
+  // Error handling in case fiel is not found
+  if (fp == NULL)
+  {
+    printf("File not found\n");
+    exit(EXIT_FAILURE);
+  }
+
+  // Read the first line- customer name and money
+  read = getline(&line, &len, fp);
+
+// Function "strtok" is used to break down the string with a "," https://pubs.opengroup.org/onlinepubs/007904975/functions/strtok.html
+  char *nam = strtok(line, ",");
+  char *bud = strtok(NULL, ",");
