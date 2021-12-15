@@ -37,7 +37,7 @@ struct Shop
   double cash;        
   struct ProductStock stock[20];
   int index;
-
+};
 
 // Create struct Customer. Use * for dynamic space allocation. Double float for more precision.  Nested struct "ProductQuantity" with array size. Integer used for index loop variable.
 struct Customer
@@ -51,8 +51,8 @@ struct Customer
 
 // Printing information for the products using methods:
 
-// printProduct takes struct "Product" as "prod". nill return. 
-void printProduct(struct Product prod) 
+// printProduct takes struct "Product" as "prod". nill return.
+void printProduct(struct Product prod)
 {
   // if the price is defined then show name and price. Else show the shopping list with only product name
   if (prod.price == 0)
@@ -71,7 +71,7 @@ double get_product_price(struct Product prod)
 // Values of prod.price from another struct
   return prod.price;
 
-                        //****** CREATE SHOP ******//
+                        //****** SHOP_DATA_PROCESSING ******//
 
 // Create and stock the shop. The Struct "Shop" retruns method output createAndStockShop().
 struct Shop createAndStockShop() 
@@ -125,14 +125,13 @@ struct Shop createAndStockShop()
 
     // Data is took form the file and put into the "Shop" struct
     shop.stock[shop.index++] = stockItem; 
-    // printf("Product: %s, €%.2f; available: %d pcs.\n", name, price, quantity); // Testing 
+    // printf("Product: %s, €%.2f; available: %d pcs.\n", name, price, quantity); // TEST 
   }
 
   return shop; 
 }
 
-                        //****** CUSTOMER SHOP EXPERIENCE******//
-
+                        //****** CUSTOMER_DATA_PROCESSING ******//
 // Read in data (product stock) and add to the customer struct
 struct Customer create_customer(char *path_to_customer)
 {
@@ -142,7 +141,7 @@ struct Customer create_customer(char *path_to_customer)
   char *line = NULL;
   size_t len = 0;
   size_t read;
-  // fiel in same directory, read only
+  // file in same directory, read only
   fp = fopen(path_to_customer, "r");
   //fp = fopen("../Data/customer_broke.csv", "r"); 
   //fp = fopen("../Data/customer_exceeding_order.csv", "r");
@@ -168,7 +167,7 @@ struct Customer create_customer(char *path_to_customer)
 
   // Assign name and budget moeny to customer
   struct Customer customer = {name, budget};
-  //printf("Ccustomer: %s, money: %.2f\n", customer.name, customer.budget); // for testing
+  //printf("Ccustomer: %s, money: %.2f\n", customer.name, customer.budget); // TEST
 
 // read in each line of the file to != -1 (end of file)
   while ((read = getline(&line, &len, fp)) != -1)
@@ -186,13 +185,13 @@ struct Customer create_customer(char *path_to_customer)
     struct Product product = {name};
     // temp variable shopping list item
     struct ProductQuantity shopping_list_item = {product, quantity};
-    // printf("Test3: %s, qty: %d\n", shopping_list_item.product, shopping_list_item.quantity); //test Ok
+    // printf("Test3: %s, qty: %d\n", shopping_list_item.product, shopping_list_item.quantity); // TEST
     // Assign shopping_list_items and shoppingList[index] together
     customer.shoppingList[customer.index++] = shopping_list_item;
 
-    // printf("Test2: %s\n", product.name); //test OK
-    // printf("Test3: %s\n", price); // test NOT OK
-    // printf("qty, %d\n", customer.shoppingList[customer.index]); // for testing - OK
+    // printf("Test2: %s\n", product.name); // TEST
+    // printf("Test3: %s\n", price); // TEST
+    // printf("qty, %d\n", customer.shoppingList[customer.index]); // TEST
   }
   
   // test
@@ -204,17 +203,15 @@ struct Customer create_customer(char *path_to_customer)
   return customer;
 }
 
-//****** MAIN MENU ******//
-
+                        //****** SHOP_DETAILS ******//
 // Method to print out the details of the shop 
 void printShop(struct Shop *sh)
 
 // Display details of the shops cash
- printf("\nShop has €%.2f in cash\n", sh->cash);
- printf("==== ==== ====\n");
-
+printf("\nShop has €%.2f in cash\n", sh->cash);
+printf("==== ==== ====\n");
 // For loop to loop over the index and show item details
-   for (int i = 0; i < sh->index; i++)
+    for (int i = 0; i < sh->index; i++)
   {
     printProduct(sh->stock[i].product);
     printf("Available amount: %d\n", sh->stock[i].quantity);
@@ -222,7 +219,7 @@ void printShop(struct Shop *sh)
   printf("\n");
 }
 
-
+                        //****** CUSTOMER_DETAILS ******//
 // Method to print out the details of the customer
 // Return total cost
 double print_customers_details(struct Customer *cust, struct Shop *sh)
@@ -248,7 +245,7 @@ double print_customers_details(struct Customer *cust, struct Shop *sh)
     // Initialise variable
     double sub_total = 0;
 
-    //****** CUSTOMER******//
+                        //****** CUSTOMER ******//
 
     // check if shopping list matches shop list of products
     int match_exist = 0;
@@ -308,13 +305,177 @@ double print_customers_details(struct Customer *cust, struct Shop *sh)
 
 
 
-//****** MAIN METHOD ******//
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                        //****** SHOP_MENU ******//
+
+
+// Menu script adapted from https://stackoverflow.com/questions/42430351/simple-menu-in-c 
+void shop_menu(struct Shop sh)
+{
+  char char_choice[2];
+  // initialise the variable
+  int choice = -1;
+
+  system("cls");   // Windows systems
+  system("clear"); // Linux systems
+    
+  do
+  {
+    printf("***************\n"));
+    printf("Welcome to the Shop Main Menu\n");
+    printf("***************\n"));
+    printf("1. Shop Details\n");
+    printf("2. Customer A - good case\n");
+    printf("3. Customer B - Broke funds case\n");
+    printf("4. Customer C - exceeding order case\n");
+    printf("5. Live Mode\n");
+    printf("9. Exit\n");
+    printf("***************\n"));
+    printf("Please enter your choice:");
+
+
+    scanf("%s", char_choice);
+    choice = atoi(char_choice);
+
+    switch (choice)
+    {
+
+                            //****** PRINT 1. SHOP DETAILS ******//
+    // Case switch https://www.guru99.com/c-switch-case-statement.html
+    case 1:
+
+      printShop(&sh);
+
+      break;
+
+                            //****** PRINT 2. PROCESS_ORDER_GOOD_CASE ******//
+    case 2:; // The C language standard only allows statements​ to follow a label. The language does not group declarations in the same category as statements
+
+      // Create customer A struct, the working case
+      // Call the method and read data from a file
+      struct Customer customer_A = create_customer("../Data/customer_good.csv"); 
+
+      // Print customer details
+      double total_cost = print_customers_details(&customer_A, &sh);
+
+      // Show customer's shopping list
+      process_order(&customer_A, &sh, &total_cost);
+
+      break;
+
+                           //****** PRINT 3. PROCESS_ORDER_BROKE_CASE ******//
+    case 3:;
+
+      // Create customer B struct, the broke case
+      // Call the method and read data from a file
+      struct Customer customer_B = create_customer("../Data/customer_broke.csv");
+
+      // Print customer details
+      total_cost = print_customers_details(&customer_B, &sh);
+
+      // Show customer's shopping list
+      process_order(&customer_B, &sh, &total_cost);
+
+      break;
+
+                            //****** PRINT 4. PROCESS_ORDER_EXCEEDING_CASE ******//
+    case 4:;
+
+      // Create customer C struct, exceeding case
+      // Call the method and read data from a file
+      struct Customer customer_C = create_customer("../Data/customer_exceeding_order.csv");
+
+      // Print customer details
+      total_cost = print_customers_details(&customer_C, &sh);
+
+      // Show customer's shopping list
+      process_order(&customer_C, &sh, &total_cost);
+
+      break;
+
+    case 5:;
+      // Welcoming message
+      printf("\nYou are now in Live Mode\n");
+      printf("-------------------------\n");
+
+      
+      printf("Enter your name please: ");
+      // declare the variable
+      char *customer_name = malloc(sizeof(char) * 50);
+      scanf("%s", customer_name);
+      printf("Welcome, %s to the Live Mode shopping experience. \n", customer_name);
+
+      // get user input
+      printf("Please tell me your shopping your budget: ");
+      // declare the variable
+      double budget; 
+      scanf("%lf", &budget);
+      // printf("Confirming entering budget: €%.2f. \n", budget); // TEST
+      interactive_mode(&sh, &budget);
+
+      break;
+
+    case 9:;
+      // exit
+      break;
+
+    default:
+      printf("sorry you have entered a wrong key. Enter the option number only.\n");
+      break;
+    }
+  } 
+  while (choice != 9);
+}
+
+
+                        //****** MAIN METHOD ******//
 int main()
 {
 
-  // Create shop
-  struct Shop shop_one = createAndStockShop(); 
+  // Create and stock the shop
+  struct Shop shop_one = createAndStockShop();
+  // Display shop menu
+
+  shop_menu(shop_one);
 
   // Nill return
   return 0;
