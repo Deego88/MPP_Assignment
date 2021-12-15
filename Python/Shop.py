@@ -64,7 +64,7 @@ def create_and_stock_shop():
             # print(ps) test
     return shop
 
-# ****** CREATE_CUSTOMER ******
+# ****** CREATE_CUSTOMER ****** https://github.com/Deego88/MPP_Assignment/blob/master/Data/shop_stock.csv
 
 
 def create_customer(file_path):
@@ -239,9 +239,103 @@ def process_order(cust, sh, total_cost):
 
     return
 
+
+# ****** LIVE_MODE ******
+def interactive_mode(sh, budget):
+    # Print stock
+    print(f"\nTthis is a list of products for sale in the shop:")
+    print_shop(sh)
+
+    # initialise
+    product_name = ""
+    quantity = 0
+
+    # initialise a forever loop forcing the user to exit only with an x
+    while product_name != "x":
+
+        print()
+        # Request input from the user, assign to the variable
+        product_name = input(
+            "\nPlease enter your product name (press x to exit): ")
+
+        print(f"Searching for: {product_name}")
+
+        # initialise to 0 no match
+        match_exist = 0
+
+        # loop over shop stock list looking for a match from customer's list
+        for sh_item in sh.stock:
+
+            # initialise
+            sub_total = 0
+
+            # assign the (j-th) product from the shop stock list as a shorthand
+            sh_item_name = sh_item.product.name
+
+            # IF there is a match
+            if (product_name == sh_item_name):
+
+                match_exist += 1  # set match
+
+                quantity = int(input("Please enter your requested quantity: "))
+
+                # check products availability
+                # If there is product in stock
+                if (quantity <= sh_item.quantity):
+
+                    # check product price and calculate sub-total cost
+                    sub_total = sh_item.product.price * quantity
+
+                    # IF customer has enough funds
+                    if (budget >= sub_total):
+
+                        # update customer's funds
+                        budget = budget - sub_total
+                        print(
+                            f"Congrats! you bought the product. Sub total cost was €{sub_total:.2f}. Your funds are now €{budget:.2f}.")
+
+                        # update the shop stock and cash
+                        sh_item.quantity = sh_item.quantity - quantity
+
+                        sh.cash = sh.cash + sub_total
+                        print(
+                            f"Shop quantity of {sh_item_name} in now: {sh_item.quantity:.0f}. The shop has {sh.cash:.2f} cash.")
+
+                    else:  # customer cannot afford all
+                        print(
+                            f"Sorry you do nto have enough funds, you require €{(sub_total - budget):.2f} extra. ", end="")
+
+                # customer wants more than in stock
+                else:
+                    # check how many can be bought and buy all that is in stock
+                    partial_order_qty = quantity - \
+                        (quantity - sh_item.quantity)
+
+                    # perform the sub-total cost for the item
+                    sub_total_partial = partial_order_qty * \
+                        sh_item.product.price
+                    # Prints out cost of all items of the product
+                    print(
+                        f"Only {partial_order_qty:.0f} is available and that many bought. Sub-total cost was €{sub_total_partial:.2f}. ")
+
+                    # update customer's budget
+                    budget = budget - sub_total_partial
+                    print(
+                        f"Budget after buying this item: €{budget:.2f}.")
+
+                    # update the shop stock(partial order) and cash
+                    sh_item.quantity = sh_item.quantity - partial_order_qty
+
+                    # update the shop cash
+                    sh.cash = sh.cash + sub_total_partial
+                    print(
+                        f"This product is no longer avilable in shop (stock: {sh_item.quantity:.0f}). Cash in shop now: {sh.cash:.2f}.")
+
+        if (match_exist == 0):  # product not available in stock
+            print("Product not found in shop.")
+
+
 #****** SHOP_DETAILS******#
-
-
 def print_shop(sh):  # takes 'shop' dataclass as a parameter
     # Show shop detials
     # print(sh)  # for testing - ok
@@ -356,9 +450,10 @@ def shop_menu(shop):
 def main():
     # Clear screen
     os.system("cls")   # for Windows
-    os.system("clear")  # for Linux
+    os.system("cls")  # for Linux
 
     shop_one = create_and_stock_shop()
+
     shop_menu(shop_one)
 
 
