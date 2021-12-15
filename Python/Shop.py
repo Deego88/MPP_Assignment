@@ -239,15 +239,129 @@ def process_order(cust, sh, total_cost):
 
     return
 
+#****** SHOP_DETAILS******#
+
+
+def print_shop(sh):  # takes 'shop' dataclass as a parameter
+    # Show shop detials
+    # print(sh)  # for testing - ok
+    print(f"\nShop has {sh.cash:.2f} in cash")
+    print("==== ==== ====")
+    for item in sh.stock:
+        print_product(item.product)
+        print(f"Available amount: {item.quantity:.0f}")
+
+
+# ****** SHOP_MENU ******#
+def display_menu():
+
+    print("***************\n")
+    print("***************\n")
+    print("Shop Main Menu\n:")
+    print("***************\n")
+    print("1 - Shop Details\n")
+    print("2 - Customer A - good case\n")
+    print("3 - Customer B - Broke funds case\n")
+    print("4 - Customer C - exceeding order case\n")
+    print("5 - Live mode\n")
+    print("9 - Exit\n")
+    print("***************\n")
+
+
+def shop_menu(shop):
+
+    # Main menu screen
+    display_menu()
+
+    while True:  # this is a 'forever' loop, unless interupted (break)
+
+        # Request input from the user, assign to variable choice
+        choice = input("Please enter your choice: ")
+
+        if (choice == "1"):
+            # print("inside option 1\n") # for testing - ok
+            print_shop(shop)
+            display_menu()
+
+        elif (choice == "2"):
+            # print("inside option 2\n") # for testing - ok
+
+            # create customer A struct (good case)
+            customer_A = create_customer(
+                "../Data/customer_good.csv")  # read data from a file
+
+            # print customer details and shopping list
+            total_cost = print_customers_details(customer_A, shop)
+
+            # show customer's shopping list by calling relevant method
+            process_order(customer_A, shop, total_cost)
+
+            display_menu()
+
+        elif (choice == "3"):
+            # create customer B struct (good case)
+            customer_B = create_customer(
+                "../Data/customer_broke.csv")  # read data from a file
+
+            # print customer details and shopping list
+            total_cost = print_customers_details(customer_B, shop)
+
+            # show customer's shopping list by calling relevant method
+            process_order(customer_B, shop, total_cost)
+
+            display_menu()
+
+        elif (choice == "4"):
+            # create customer C struct (good case)
+            customer_C = create_customer(
+                "../Data/customer_exceeding_order.csv")  # read data from a file
+
+            # print customer details and shopping list
+            total_cost = print_customers_details(customer_C, shop)
+
+            # show customer's shopping list by calling relevant method
+            process_order(customer_C, shop, total_cost)
+
+            display_menu()
+
+        elif (choice == "5"):
+
+            # Welcoming message
+            print("\You are now in Live Mode")
+            print("-------------------------")
+
+            # get user's name
+            customer_name = input("Enter your name please: ")
+            print(
+                f"Welcome, {customer_name} to the live shopping experience. ")
+
+            # get user's budget
+            budget = float(
+                input("Please tell me your shopping budget: "))
+
+            # go to the interactive mode
+            interactive_mode(shop, budget)
+
+            display_menu()
+
+        elif (choice == "9"):  # Exit condition
+            print("")
+            break
+
+        else:
+            display_menu()
+
 
 #****** MAIN_FUNCTION ******#
-
-
 def main():
     # Clear screen
     os.system("cls")   # for Windows
     os.system("clear")  # for Linux
 
+    shop_one = create_and_stock_shop()
+    shop_menu(shop_one)
 
+
+# only for script execution
 if __name__ == "__main__":
     main()
