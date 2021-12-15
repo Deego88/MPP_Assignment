@@ -173,7 +173,74 @@ def print_customers_details(cust, sh):
 
     return total_cost
 
-    #****** MAIN_FUNCTION ******#
+
+# ****** SHOP_DETAILS******
+# Create order function
+def process_order(cust, sh, total_cost):
+
+    # IF the customer has not enough funds for the order
+    if (cust.budget < total_cost):
+        print(
+            f"Sorry, you do not have enough funds, you require €{(total_cost - cust.budget):.2f} extra. ", end="")
+
+    # else customer has enough funds
+    else:
+        # loop over the items in the customer shopping list
+        for cust_item in cust.shopping_list:
+            # Initialise (no match=0)
+            match_exist = 0
+
+            # Assign the (i-th) product from the customer schopping list as a shorthand
+            cust_item_name = cust_item.product.name
+
+           # loop over the stock list to find a match
+            for sh_item in sh.stock:
+                # assign the (j-th) product from the shop stock list as a shorthand
+                sh_item_name = sh_item.product.name
+                # check if there is match
+                if (cust_item_name == sh_item_name):
+                    match_exist = + 1
+
+                    # IF sufficient amount exists do the following
+                    if (cust_item.quantity <= sh_item.quantity):
+                        # Update the shop stock
+                        sh_item.quantity = sh_item.quantity - cust_item.quantity
+                        print(
+                            f"Shop product {cust_item.product.name} is now updated to: {sh_item.quantity:.0f}")
+
+                    else:  # customer wants more than in stock
+                        # check how many can be bought
+                        partial_order_qty = cust_item.quantity - \
+                            (cust_item.quantity - sh_item.quantity)
+                        # Buy all stock
+                        # Perform the cost of the (i-th )item from shopping list
+                        sub_total_partial = partial_order_qty * \
+                            sh_item.product.price
+
+                        # Update the shop stock
+                        sh_item.quantity = sh_item.quantity - partial_order_qty
+
+                        print(
+                            f"Shop product {cust_item.product.name} is now updated to {sh_item.quantity:.0f}.")
+
+            # IF product is not in the shop, there is no match
+            if (match_exist == 0):
+                print(f"\tSorry the shop doesn't have this product.")
+
+        # update shop and customer
+        sh.cash = sh.cash + total_cost
+
+        cust.budget = cust.budget - total_cost
+
+        print(f"\nThe shop now has €{sh.cash:.2f} in cash. ")
+        # updated customer's budget
+        print(f"{cust.name} has €{cust.budget:.2f} remianing for shopping.")
+        print("")
+
+    return
+
+
+#****** MAIN_FUNCTION ******#
 
 
 def main():
