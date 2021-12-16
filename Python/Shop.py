@@ -71,7 +71,7 @@ def create_customer(file_path):
     # initialise
     customer = Customer()
     # read in CSV and set variables
-    with open(file_path) as csv_file:
+    with open(file_path, encoding='unicode_escape') as csv_file:
         csv_reader = csv.reader(csv_file, delimiter=',')
         first_row = next(csv_reader)
         # Assigns name [0] and budget [1] from file
@@ -101,11 +101,11 @@ def print_product(prod):
 
 def print_customers_details(cust, sh):
 
-    # Customer name adn budget is printed
-    print(f"\n*****************************************")
+    # Customer name and budget is printed
+    print(f"\n**********************************************************************************")
     print(
         f"\nThe Customer name is: {cust.name}, the customer budget is: €{cust.budget:.2f}")
-    print(f"\n*****************************************")
+    print(f"\n**********************************************************************************")
 
     # initialise
     total_cost = 0
@@ -166,10 +166,10 @@ def print_customers_details(cust, sh):
         if (match_exist == 0):
             # Show the cost
             print(
-                f"\tSorry but this product is nout of stock. Your sub-total cost is now €{sub_total:.2f}.")
+                f"\tSorry but this product is not available.  sub-total cost will be€{sub_total:.2f}.")
 
     # Cost of all items
-    print(f"\nCustomer, yout total shopping will be€{total_cost:.2f}. \n")
+    print(f"Total shopping cost will be€{total_cost:.2f}. \n")
 
     return total_cost
 
@@ -197,7 +197,7 @@ def process_order(cust, sh, total_cost):
             for sh_item in sh.stock:
                 # assign the (j-th) product from the shop stock list as a shorthand
                 sh_item_name = sh_item.product.name
-                # check if there is match
+                # check if there is a match
                 if (cust_item_name == sh_item_name):
                     match_exist = + 1
 
@@ -243,7 +243,7 @@ def process_order(cust, sh, total_cost):
 # ****** LIVE_MODE ******
 def interactive_mode(sh, budget):
     # Print stock
-    print(f"\nTthis is a list of products for sale in the shop:")
+    print(f"\nThis is a list of products for sale in the shop:")
     print_shop(sh)
 
     # initialise
@@ -260,7 +260,7 @@ def interactive_mode(sh, budget):
 
         print(f"Searching for: {product_name}")
 
-        # initialise to 0 no match
+        # initialise (0 = no match)
         match_exist = 0
 
         # loop over shop stock list looking for a match from customer's list
@@ -280,7 +280,6 @@ def interactive_mode(sh, budget):
                 quantity = int(input("Please enter your requested quantity: "))
 
                 # check products availability
-                # If there is product in stock
                 if (quantity <= sh_item.quantity):
 
                     # check product price and calculate sub-total cost
@@ -303,7 +302,7 @@ def interactive_mode(sh, budget):
 
                     else:  # customer cannot afford all
                         print(
-                            f"Sorry you do nto have enough funds, you require €{(sub_total - budget):.2f} extra. ", end="")
+                            f"Sorry you do nto have enough funds, you require €{(sub_total - budget):.2f} extra.", end="")
 
                 # customer wants more than in stock
                 else:
@@ -316,23 +315,22 @@ def interactive_mode(sh, budget):
                         sh_item.product.price
                     # Prints out cost of all items of the product
                     print(
-                        f"Only {partial_order_qty:.0f} is available and that many bought. Sub-total cost was €{sub_total_partial:.2f}. ")
+                        f"Only {partial_order_qty:.0f} is available. Sub-total cost was €{sub_total_partial:.2f}. ")
 
                     # update customer's budget
                     budget = budget - sub_total_partial
                     print(
-                        f"Budget after buying this item: €{budget:.2f}.")
+                        f"Customers budget is: €{budget:.2f} after buying the item.")
 
-                    # update the shop stock(partial order) and cash
+                    # update the shop stock adn cash
                     sh_item.quantity = sh_item.quantity - partial_order_qty
 
-                    # update the shop cash
                     sh.cash = sh.cash + sub_total_partial
                     print(
-                        f"This product is no longer avilable in shop (stock: {sh_item.quantity:.0f}). Cash in shop now: {sh.cash:.2f}.")
+                        f"This product is not avilable in the shop: {sh_item.quantity:.0f}). Cash in shop now: {sh.cash:.2f}.")
 
         if (match_exist == 0):  # product not available in stock
-            print("Product not found in shop.")
+            print("Product unavailable.")
 
 
 #****** SHOP_DETAILS******#
@@ -340,26 +338,26 @@ def print_shop(sh):  # takes 'shop' dataclass as a parameter
     # Show shop detials
     # print(sh)  # for testing - ok
     print(f"\nShop has {sh.cash:.2f} in cash")
-    print("==== ==== ====")
+    print("==== ==== ==== ==== ==== ==== ==== ==== ==== ==== ==== ==== ==== ====")
     for item in sh.stock:
         print_product(item.product)
         print(f"Available amount: {item.quantity:.0f}")
+    print("==== ==== ==== ==== ==== ==== ==== ==== ==== ==== ==== ==== ==== ====")
 
 
 # ****** SHOP_MENU ******#
 def display_menu():
 
-    print("***************\n")
-    print("***************\n")
-    print("Shop Main Menu\n:")
-    print("***************\n")
-    print("1 - Shop Details\n")
-    print("2 - Customer A - good case\n")
-    print("3 - Customer B - Broke funds case\n")
-    print("4 - Customer C - exceeding order case\n")
-    print("5 - Live mode\n")
-    print("9 - Exit\n")
-    print("***************\n")
+    print("\n******************************")
+    print("Welcome to the Shop Main Menu\n")
+    print("******************************\n")
+    print("[1] - Shop Details\n")
+    print("[2] - Customer A: good case\n")
+    print("[3] - Customer B: Broke funds case\n")
+    print("[4] - Customer C: exceeding order case\n")
+    print("[5] - Live Mode\n")
+    print("[9] - Exit\n")
+    print("******************************\n")
 
 
 def shop_menu(shop):
@@ -369,18 +367,16 @@ def shop_menu(shop):
 
     while True:  # this is a 'forever' loop, unless interupted (break)
 
-        # Request input from the user, assign to variable choice
+        # Request user input
         choice = input("Please enter your choice: ")
 
         if (choice == "1"):
-            # print("inside option 1\n") # for testing - ok
             print_shop(shop)
             display_menu()
 
         elif (choice == "2"):
-            # print("inside option 2\n") # for testing - ok
 
-            # create customer A struct (good case)
+            # create customer A- good case csv
             customer_A = create_customer(
                 "../Data/customer_good.csv")  # read data from a file
 
@@ -393,7 +389,7 @@ def shop_menu(shop):
             display_menu()
 
         elif (choice == "3"):
-            # create customer B struct (good case)
+            # create customer B- broke case csv
             customer_B = create_customer(
                 "../Data/customer_broke.csv")  # read data from a file
 
@@ -406,7 +402,7 @@ def shop_menu(shop):
             display_menu()
 
         elif (choice == "4"):
-            # create customer C struct (good case)
+            # create customer C- exceeding case
             customer_C = create_customer(
                 "../Data/customer_exceeding_order.csv")  # read data from a file
 
@@ -420,18 +416,18 @@ def shop_menu(shop):
 
         elif (choice == "5"):
 
-            # Welcoming message
-            print("\You are now in Live Mode")
+            # Live mode welcome message
+            print("-------------------------")
+            print("You are now in Live Mode")
             print("-------------------------")
 
             # get user's name
             customer_name = input("Enter your name please: ")
             print(
-                f"Welcome, {customer_name} to the live shopping experience. ")
+                f"Welcome, {customer_name} to the live Mode shopping experience. ")
 
             # get user's budget
-            budget = float(
-                input("Please tell me your shopping budget: "))
+            budget = float(input("Please tell me your shopping budget: "))
 
             # go to the interactive mode
             interactive_mode(shop, budget)
@@ -457,6 +453,6 @@ def main():
     shop_menu(shop_one)
 
 
-# only for script execution
 if __name__ == "__main__":
+    # execute only if run as a script
     main()
