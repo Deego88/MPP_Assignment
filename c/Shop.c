@@ -100,12 +100,9 @@ struct Shop createAndStockShop()
   // initialise the shop "Shop" struct and save  cash in hand value
   struct Shop shop = {cashInShop};
 
-  // Below we read each line and extract and assign certain data to correct variables.
   // read in each line of the file to != -1 (end of file)
   while ((read = getline(&line, &len, fp)) != -1)
   {
-    // printf(": %s \n", line); // This is for testing if the program reads the file
-
     // Function "strtok" is used to break down the string with a "," https://pubs.opengroup.org/onlinepubs/007904975/functions/strtok.html
     char *nam = strtok(line, ","); // Exctract product name and assigns to variable "name"
     char *pri = strtok(NULL, ","); // Exctract product price 
@@ -167,7 +164,6 @@ struct Customer create_customer(char *path_to_customer)
 
   // Assign name and budget moeny to customer
   struct Customer customer = {name, budget};
-  //printf("Ccustomer: %s, money: %.2f\n", customer.name, customer.budget); // TEST
 
 // read in each line of the file to != -1 (end of file)
   while ((read = getline(&line, &len, fp)) != -1)
@@ -177,7 +173,7 @@ struct Customer create_customer(char *path_to_customer)
     char *p_qua = strtok(NULL, ","); // Exctract product available quantity 
 
     
-    // Conversion of str adn int: https://www.geeksforgeeks.org/atol-atoll-and-atof-functions-in-c-c/
+    // Conversion of str and int: https://www.geeksforgeeks.org/atol-atoll-and-atof-functions-in-c-c/
     char *name = malloc(sizeof(char) * 50);
     strcpy(name, p_nam);
     int quantity = atoi(p_qua);
@@ -188,16 +184,8 @@ struct Customer create_customer(char *path_to_customer)
     // printf("Test3: %s, qty: %d\n", shopping_list_item.product, shopping_list_item.quantity); // TEST
     // Assign shopping_list_items and shoppingList[index] together
     customer.shoppingList[customer.index++] = shopping_list_item;
-
-    // printf("Test2: %s\n", product.name); // TEST
-    // printf("Test3: %s\n", price); // TEST
-    // printf("qty, %d\n", customer.shoppingList[customer.index]); // TEST
   }
   
-  // test
-  // printf("Number of itmes: %d\n", customer.index); // test OK
-  // printf("1st product: %s\n", customer.shoppingList[0].product.name);       // test OK
-  // printf("Amount of 1st product: %d\n", customer.shoppingList[0].quantity); // test OK
   // printf("****\n\n");
 
   return customer;
@@ -206,12 +194,12 @@ struct Customer create_customer(char *path_to_customer)
                         //****** SHOP_DETAILS ******//
 // Method to print out the details of the shop 
 void printShop(struct Shop *sh)
-
-// Display details of the shops cash
-printf("\nShop has €%.2f in cash\n", sh->cash);
-printf("==== ==== ====\n");
-// For loop to loop over the index and show item details
-    for (int i = 0; i < sh->index; i++)
+{
+  // Display details of the shops cash
+  printf("\nShop has €%.2f in cash\n", sh->cash);
+  printf("==== ==== ====\n");
+  // For loop to loop over the index and show item details
+  for (int i = 0; i < sh->index; i++)
   {
     printProduct(sh->stock[i].product);
     printf("Available amount: %d\n", sh->stock[i].quantity);
@@ -224,9 +212,10 @@ printf("==== ==== ====\n");
 // Return total cost
 double print_customers_details(struct Customer *cust, struct Shop *sh)
 {
-  // Print customer details as per struct within main method 
+  // Print customer details as per struct within main method
+  printf("**********************************************************************************\n"); 
   printf("\nCustomer name: %s, budget: €%.2f \n", cust->name, cust->budget); 
-  printf("---- ---- ----\n");
+  printf("**********************************************************************************\n");
 
   // Initialise variables
   double total_cost = 0.0;
@@ -265,11 +254,11 @@ double print_customers_details(struct Customer *cust, struct Shop *sh)
         // IF enough stock
         if (cust->shoppingList[i].quantity <= sh->stock[j].quantity) 
         {
-          printf("\tYes, the shop has enough stock to process your order and "); 
+          printf("\tThe shop stock and"); 
 
           // Full cost of shopping list (Price* Quantity)
           double sub_total_full = cust->shoppingList[i].quantity * sh->stock[j].product.price;
-          printf("you must pay the shop €%.2f. \n", sub_total_full);          
+          printf("sub-total cost would be €%.2f. \n", sub_total_full);          
           sub_total = sub_total_full; 
         }
 
@@ -279,9 +268,9 @@ double print_customers_details(struct Customer *cust, struct Shop *sh)
           // See how many can be bought
           int partial_order_qty = cust->shoppingList[i].quantity - (cust->shoppingList[i].quantity - sh->stock[j].quantity);
 
-          // perform the cost of the i-th item from the customer's shopping list
+          // Cost of the (i-th) item from the customer's shopping list
           double sub_total_partial = partial_order_qty * sh->stock[j].product.price;
-          printf("\tThe shop only has %d available in stock and now you must pay the shop €%.2f. \n", partial_order_qty, sub_total_partial); 
+          printf("\tSorry only %d is available in stock for you, your sub-total cost is now €%.2f. \n", partial_order_qty, sub_total_partial); 
           sub_total = sub_total_partial;
         }
         // addition of sub totals
@@ -291,12 +280,12 @@ double print_customers_details(struct Customer *cust, struct Shop *sh)
     // Product not available, Nill match
     if (match_exist == 0) 
     {
-        // Prints out cost of all items of the product
-      printf("\tThe product you request is not available. Sorry for the inconvenienceSub-total cost will be €%.2f. \n", sub_total);
+        // Show the cost
+      printf("\tSorry but this product is not available.  sub-total cost will be €%.2f. \n", sub_total);
     }
   }
   // Print out cost of shopping
-  printf("\nthe total scost for todays shopping is €%.2f. \n\n", total_cost); 
+  printf("\nTotal shopping cost will be €%.2f. \n\n", total_cost); 
 
   return total_cost;
 }
@@ -334,7 +323,7 @@ void process_order(struct Customer *cust, struct Shop *sh, double *total_cost)
           {
             // update the shop stock
             sh->stock[j].quantity = sh->stock[j].quantity - cust->shoppingList[i].quantity;
-            printf("Stock quantity of %s updated to: %d \n", cust->shoppingList[i].product.name, sh->stock[j].quantity);
+            printf("Stock quantity of %s is now updated to: %d \n", cust->shoppingList[i].product.name, sh->stock[j].quantity);
           }
 
           else // customer wants more than in stock
@@ -402,11 +391,7 @@ void interactive_mode(struct Shop *sh, double *budget)
 
     printf("Searching for: \"%s\"", product_name);
 
-    // printf("Test 2: Customer budget: %.2f, product: %s\n", (*budget), product_name); // TEST
-    // printf("Test 3: Cash in shop: %f\n", *(&sh->cash));                        // TEST
-    // printf("Test 4: Product price of index 2: %.2f\n", *(&sh->stock[2].product.price)); TEST 
-
-    // initialise (0 = no match)
+    // initialise
     int match_exist = 0;
 
     // loop over shop stock list looking for a match from customer's list
@@ -438,7 +423,7 @@ void interactive_mode(struct Shop *sh, double *budget)
 
             // update customer's funds
             *budget = *budget - sub_total;
-            printf("Congrats! you bought the product. Sub total cost was €%.2f. Your funds are now €%.2f. \n", sub_total, *budget);
+            printf("Congrats! you bought the product. Sub total cost is €%.2f. Your funds are now €%.2f. \n", sub_total, *budget);
 
             // update the shop stock and cash
             sh->stock[j].quantity = sh->stock[j].quantity - quantity;
@@ -464,7 +449,7 @@ void interactive_mode(struct Shop *sh, double *budget)
 
           // update customer's budget
           *budget = *budget - sub_total_partial;
-          printf("Customers Budget is: €%.2f after buying the item. \n", *budget);
+          printf("Customers budget is: €%.2f after buying the item. \n", *budget);
 
           // update the shop stock (partial order) and cash
           sh->stock[j].quantity = sh->stock[j].quantity - partial_order_qty;
@@ -476,10 +461,9 @@ void interactive_mode(struct Shop *sh, double *budget)
     }
     if (match_exist == 0) // product not available in stock
     {
-      printf("Product not found in shop. \n");
+      printf("Product unavailable. \n");
     }
   }
-  //;
 }
 
                         //****** SHOP_MENU ******//
@@ -497,17 +481,16 @@ void shop_menu(struct Shop sh)
     
   do
   {
-    printf("***************\n");
+    printf("******************************\n");
     printf("Welcome to the Shop Main Menu\n");
-    printf("***************\n");
+    printf("******************************\n");
     printf("1. Shop Details\n");
     printf("2. Customer A - good case\n");
     printf("3. Customer B - Broke funds case\n");
     printf("4. Customer C - exceeding order case\n");
     printf("5. Live Mode\n");
     printf("9. Exit\n");
-    printf("***************\n");
-    printf("Please enter your choice:");
+    printf("******************************\n");
 
 
     scanf("%s", char_choice);
@@ -571,15 +554,16 @@ void shop_menu(struct Shop sh)
 
     case 5:;
       // Welcoming message
+      printf("---------------------------\n");
       printf("\nYou are now in Live Mode\n");
-      printf("-------------------------\n");
+      printf("---------------------------\n");
 
       
       printf("Enter your name please: ");
       // declare the variable
       char *customer_name = malloc(sizeof(char) * 50);
       scanf("%s", customer_name);
-      printf("Welcome, %s to the Live Mode shopping experience. \n", customer_name);
+      printf("Welcome, %s to the Live shopping experience. \n", customer_name);
 
       // get user input
       printf("Please tell me your shopping your budget: ");
@@ -605,15 +589,14 @@ void shop_menu(struct Shop sh)
 
 
                         //****** MAIN METHOD ******//
+
 int main()
 {
 
-  // Create and stock the shop
-  struct Shop shop_one = createAndStockShop();
-  // Display shop menu
+  // create shop
+  struct Shop shop_one = createAndStockShop(); // This struct calls the method that will read data from a file.
 
-  shop_menu(shop_one);
+  shop_menu(shop_one); // calls the method that displays the shop menu
 
-  // Nill return
   return 0;
 }
