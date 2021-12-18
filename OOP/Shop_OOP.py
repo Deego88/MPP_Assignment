@@ -68,9 +68,9 @@ class Customer:
                     sub_total = list_item.quantity * list_item.product.price
                     total_cost = + sub_total
                     return print(
-                        f"(test: {list_item.name()}) OK, there is enough of the product and sub-total would be €{sub_total}")
+                        f"(test: {list_item.name()}) there is enough of the product and sub-total would be €{sub_total}")
                 else:
-                    # print("not in stock, aaaa")
+                    print("not in stock")
                     pass
 
     def check_quantity(self, stock_list):
@@ -89,10 +89,10 @@ class Customer:
     def evaluate_order(self, sh):
 
         # Show customers details
-        print("*****************************************")
+        print("**********************************************************************************")
         print(
             f"\nThe customer name is: {self.name}, the customer budget is: €{self.budget:.2f}")
-        print("*****************************************")
+        print("**********************************************************************************")
 
         print(f"{self.name} wants the following products: ")
 
@@ -184,25 +184,25 @@ class Customer:
             elif customer_stock_state == 0:
                 # stock check - item not available
                 print(
-                    f"\tThis product is not available. Sub-total cost will be €{sub_total:.2f}.")
+                    f"\tSorry but this product is not available. Sub-total cost will be €{sub_total:.2f}.")
 
         print(
-            f"\nTotal shopping cost will be: €{self.total_cost:.2f}. \n")
+            f"Total shopping cost will be: €{self.total_cost:.2f}. \n")
 
         self.total_cost
         self.total_order_list
 
     def __repr__(self):
-
         for item in self.shopping_list:
             cost = item.cost()
+            str = ""
             str += f"\n{item}"
             if (cost == 0):
                 str += f" {self.name} doesn't know how much that costs :("
             else:
                 str += f" COST: {cost:.2f}"
 
-        str += f"\nThe cost would be: {self.order_cost():.2f}, he would have {self.budget - self.order_cost():.2f} left"
+            str += f"\nThe cost would be: {self.order_cost():.2f}, he would have {self.budget - self.order_cost():.2f} left"
 
         return str
 
@@ -251,7 +251,7 @@ class Shop:
                             # update the shop stock
                             sh_item.quantity = sh_item.quantity - cust_item.quantity
                             print(
-                                f"Stock quantity of {cust_item.product.name} updated to: {sh_item.quantity:.0f}")
+                                f"Stock quantity of {cust_item.product.name} is now updated to: {sh_item.quantity:.0f}")
 
                         else:  # customer wants more than in stock
                             # buy whole stock of the current item
@@ -274,9 +274,9 @@ class Shop:
 
             cust.budget = cust.budget - total_cost
 
-            print(f"\nShop has now €{sh.cash:.2f} in cash. ")
+            print(f"\nThe shop now has  €{sh.cash:.2f} in cash. ")
             # updated customer's budget
-            print(f"{cust.name}'s remaining money is €{cust.budget:.2f}.")
+            print(f"{cust.name} has €{cust.budget:.2f} remaining for shopping.")
             print("")
 
         return
@@ -345,7 +345,7 @@ class Shop:
 
                         else:  # customer cannot afford all
                             print(
-                                f"Sorry you do nto have enough funds, you require €{(sub_total - budget):.2f} extra. ", end="")
+                                f"Sorry you do not have enough funds, you require €{(sub_total - budget):.2f} extra. ", end="")
                     # customer wants more than in stock
                     else:
                         # check how many can be bought and buy all that is in stock
@@ -381,18 +381,16 @@ class Shop:
         while True:  # this is a 'forever' loop, unless interupted (break)
 
             # Main menu screen
-            print("***************\n")
-            print("***************\n")
+            print("******************************\n")
             print("Welcome to the Shop Main Menu:\n")
-            print("***************\n")
-            print("1 - Shop Details\n")
-            print("2 - Customer A - good case\n")
-            print("3 - Customer B - Broke funds case\n")
-            print("4 - Customer C - exceeding order case\n")
-            print("5 - Live Mode\n")
-            print("9 - Exit\n")
-            print("NB: The sequence of the customers being processed might affect the initial case of the customers.\n")
-            print("***************\n")
+            print("******************************\n")
+            print("[1] - Shop Details\n")
+            print("[2] - Customer A: good case\n")
+            print("[3] - Customer B: Broke funds case\n")
+            print("[4] - Customer C: exceeding order case\n")
+            print("[5] - Live Mode\n")
+            print("[9] - Exit\n")
+            print("******************************\n")
 
             # Request user input
             choice = input("Please enter your choice: ")
@@ -440,11 +438,12 @@ class Shop:
 
             elif (choice == "5"):
 
-                # Welcoming message
-                print("\You are now in Live Mode")
+                # Live Mode welcome message
+                print("-------------------------")
+                print("You are now in Live Mode")
                 print("-------------------------")
 
-                # # get user's name
+                # get user's name
                 self.customer_name = input("Enter your name please: ")
                 print(
                     f"Welcome, {self.customer_name} to the live shopping experience. ")
@@ -460,11 +459,11 @@ class Shop:
                 print("")
                 break
 
-#******_ SHOP_SELF******#
+#******SHOP_SELF******#
 
     def __repr__(self):
         str = ""
-        str += f"\nShop has {self.cash:.2f} in cash \n==== ==== ====\n"
+        str += f"\nShop has {self.cash:.2f} in cash \n==== ==== ==== ==== ==== ==== ==== ==== ==== ==== ==== ==== ==== ====\n"
         for item in self.stock:
             str += f"{item}\n"
 
